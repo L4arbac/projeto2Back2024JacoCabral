@@ -1,24 +1,62 @@
 const { Sequelize } = require("sequelize");
+const { Client } = require("pg"); // Importa o cliente PostgreSQL
+
+// Dados de conexão ao banco de dados
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
+const dbHost = process.env.DB_HOST || "localhost";
+const dbPort = process.env.DB_PORT || 5432;
+
+// Função para verificar se o banco de dados existe e criar se necessário
+async function ensureDatabaseExists() {
+  const client = new Client({
+    user: dbUser,
+    host: dbHost,
+    password: dbPassword,
+    port: dbPort,
+  });
+
+  try {
+    await client.connect();
+
+    const result = await client.query(
+      `SELECT 1 FROM pg_database WHERE datname='${dbName}';`
+    );
+
+    if (result.rowCount === 0) {
+      await client.query(`CREATE DATABASE "${dbName}";`);
+      console.log(`Banco de dados "${dbName}" criado com sucesso.`);
+    } else {
+      console.log(`Banco de dados "${dbName}" já existe.`);
+    }
+  } catch (error) {
+    console.error("Erro ao verificar ou criar o banco de dados:", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
 
 // Configuração do Sequelize com PostgreSQL
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST || "localhost",
-    dialect: "postgres",
-    port: process.env.DB_PORT || 5432,
-    logging: false, // Desativa o log das queries no console
-  }
-);
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+  host: dbHost,
+  dialect: "postgres",
+  port: dbPort,
+  logging: false, 
+});
 
 (async () => {
   try {
+    // Garante que o banco de dados existe
+    await ensureDatabaseExists();
+
+    // Autentica e sincroniza as tabelas
     await sequelize.authenticate();
     console.log("Conectado ao banco de dados PostgreSQL com Sequelize.");
-    sequelize
-      .sync({ force: false ,alter:true}) // force: false não recria a tabela se já existir
+
+    await sequelize
+      .sync({ force: false, alter: true }) 
       .then(() => {
         console.log("Tabelas sincronizadas com sucesso.");
       })
