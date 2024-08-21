@@ -3,6 +3,8 @@ const cafeService = require("../service/CafeService")
 const vendaService = require("../service/VendaService")
 
 class startScript {
+
+  
   async run(req,res) {
   // criando usuários
     try {

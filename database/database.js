@@ -48,17 +48,16 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
 
 (async () => {
   try {
-    // Garante que o banco de dados existe
+
     await ensureDatabaseExists();
 
-    // Autentica e sincroniza as tabelas
     await sequelize.authenticate();
-    console.log("Conectado ao banco de dados PostgreSQL com Sequelize.");
+    console.log("Conectado ao banco de dados");
 
     await sequelize
       .sync({ force: false, alter: true }) 
       .then(() => {
-        console.log("Tabelas sincronizadas com sucesso.");
+        console.log("Tabelas sincronizadas");
       })
       .catch((err) => {
         console.error("Erro ao sincronizar tabelas:", err);

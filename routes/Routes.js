@@ -4,6 +4,7 @@ const userController = require('../controller/UserController');
 const start = require("../scripts/startScript")
 const CafeController = require('../controller/CafeController')
 const VendaController = require('../controller/VendaController');
+const IngredienteController = require('../controller/IngredienteController');
 
 //
 
@@ -26,11 +27,18 @@ router.put('/cafe/:id', CafeController.update);
 router.delete('/cafe/:id', CafeController.delete);
 
 
-// rotas para gestao da model cofe venda
+// rotas para gestao da model venda
 router.post('/venda', VendaController.createVenda);
 router.get('/venda', VendaController.listVendas);
 router.get('/venda/:id', VendaController.getVendaById);
 router.put('/venda/:id', VendaController.updateVenda);
 router.delete('/venda/:id', VendaController.deleteVenda);
+
+// rotas para gestao da model ingrediente
+router.post('/ingrediente', IngredienteController.createIngrediente);
+router.put('/ingrediente/:id', IngredienteController.updateIngrediente);
+router.get('/ingrediente', IngredienteController.listIngredientes);
+router.get('/ingrediente/:id', IngredienteController.getIngredienteById);
+router.delete('/ingrediente/:id', IngredienteController.deleteIngrediente);
 
 module.exports = router;

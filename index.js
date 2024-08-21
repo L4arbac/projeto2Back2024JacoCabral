@@ -11,7 +11,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use('/',routes);
 
-
+console.log("aquiiiiiiiiiiiiiiiiiiiiiii")
 
 
 // Configura o servidor para escutar na porta 3000
