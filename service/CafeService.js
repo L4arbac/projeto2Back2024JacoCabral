@@ -1,18 +1,34 @@
 const Cafe = require("../model/Cafe");
 
 const CafeService = {
-  async createCafe(nome, descricao,preco) {
+  async createCafe(nome, descricao, preco, ingredienteIds) {
     try {
       const cafe = await Cafe.create({ nome,descricao, preco });
+      await cafe.addIngredientes(ingredienteIds);
       return cafe;
     } catch (error) {
       throw new Error(`Erro ao criar café: ${error.message}`);
     }
   },
 
-  async getAllCafes() {
+  async getAllCafes(limite , pagina ) {
     try {
-      const cafes = await Cafe.findAll();
+
+      
+      const validLimites = [5, 10, 30];
+      if (!validLimites.includes(limite)) {
+          throw new Error("Limite inválido. Os valores possíveis são 5, 10 ou 30.");
+      }
+
+     
+      const offset = (pagina - 1) * limite;
+
+      
+      const cafes = await Cafe.findAll({
+          limit: limite,   
+          offset: offset   
+      });
+
       return cafes;
     } catch (error) {
       throw new Error(`Erro ao listar cafés: ${error.message}`);

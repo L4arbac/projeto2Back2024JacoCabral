@@ -3,6 +3,8 @@ const authMiddleware = require("../auth/authMiddleware");
 
 class VendaController {
   async createVenda(req, res) {
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para criar uma nova venda.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         const { userId, cafeIds, quantidade, total } = req.body;
@@ -27,9 +29,17 @@ class VendaController {
   }
 
   async listVendas(req, res) {
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para listar todas as vendas com paginação.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
-        const vendas = await vendaService.listVendas();
+        const limite = parseInt(req.query.limite) || 5;  
+        const pagina = parseInt(req.query.pagina) || 1; 
+  
+        if (![5, 10, 30].includes(limite)) {
+            return res.status(400).json({ message: "Limite inválido. Os valores possíveis são 5, 10 ou 30." });
+        }
+        const vendas = await vendaService.listVendas(limite, pagina);
         res.status(200).json({
           message: "Lista de vendas recuperada com sucesso!",
           data: vendas,
@@ -43,6 +53,8 @@ class VendaController {
   }
 
   async getVendaById(req, res) {
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para recuperar uma venda pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         const id = parseInt(req.params.id, 10);
@@ -67,6 +79,8 @@ class VendaController {
   }
 
   async updateVenda(req, res) {
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para atualizar uma venda existente pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         if (req.user.adm) {
@@ -99,6 +113,8 @@ class VendaController {
   }
 
   async deleteVenda(req, res) {
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para deletar uma venda pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         if (req.user.adm) {

@@ -3,6 +3,8 @@ const authMiddleware = require("../auth/authMiddleware");
 
 class IngredienteController {
   async createIngrediente(req, res) {
+    // #swagger.tags = ['Ingredientes']
+    // #swagger.description = 'Endpoint para criar um novo ingrediente.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         if (req.user.adm) {
@@ -26,6 +28,8 @@ class IngredienteController {
   }
 
   async updateIngrediente(req, res) {
+    // #swagger.tags = ['Ingredientes']
+    // #swagger.description = 'Endpoint para atualizar um ingrediente existente pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         if (req.user.adm) {
@@ -50,10 +54,19 @@ class IngredienteController {
   }
 
   async listIngredientes(req, res) {
+    // #swagger.tags = ['Ingredientes']
+    // #swagger.description = 'Endpoint para listar todos os ingredientes com paginação.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         if (req.user.adm) {
-          const ingredientes = await IngredienteService.listIngredientes();
+          const limite = parseInt(req.query.limite) || 5;  
+          const pagina = parseInt(req.query.pagina) || 1; 
+    
+          if (![5, 10, 30].includes(limite)) {
+            return res.status(400).json({ message: "Limite inválido. Os valores possíveis são 5, 10 ou 30." });
+          }
+
+          const ingredientes = await IngredienteService.listIngredientes(limite, pagina);
           res.status(200).json({
             message: "Lista de ingredientes recuperada com sucesso!",
             data: ingredientes,
@@ -73,6 +86,8 @@ class IngredienteController {
   }
 
   async getIngredienteById(req, res) {
+    // #swagger.tags = ['Ingredientes']
+    // #swagger.description = 'Endpoint para recuperar um ingrediente pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         if (req.user.adm) {
@@ -102,6 +117,8 @@ class IngredienteController {
   }
 
   async deleteIngrediente(req, res) {
+    // #swagger.tags = ['Ingredientes']
+    // #swagger.description = 'Endpoint para deletar um ingrediente pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         if (req.user.adm) {

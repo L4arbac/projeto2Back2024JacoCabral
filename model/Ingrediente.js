@@ -8,9 +8,9 @@ const Ingrediente = sequelize.define('Ingrediente', {
         allowNull: false,
         unique: true,
     },
-    descricao: {
-        type: DataTypes.STRING,
-        allowNull: true,
+    preco: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
     },
     quantidade: {
         type: DataTypes.FLOAT,

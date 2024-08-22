@@ -1,11 +1,14 @@
 const userService = require("../service/UserService");
 const cafeService = require("../service/CafeService")
 const vendaService = require("../service/VendaService")
+const ingredienteService = require('../service/IngredienteService'); 
 
 class startScript {
 
   
   async run(req,res) {
+  // #swagger.tags = ['Install']
+  // #swagger.description = 'Endpoint para popular o banco de dados.'
   // criando usuários
     try {
 
@@ -52,27 +55,77 @@ class startScript {
     }
 
 
+
+
+ 
+    try {
+      const ingredientesData = [
+        { "nome": "Café", "preco": 10.00, "quantidade": 100 },
+        { "nome": "Leite", "preco": 2.00, "quantidade": 200 },
+        { "nome": "Açúcar", "preco": 1.50, "quantidade": 50 },
+        { "nome": "Chocolate", "preco": 3.00, "quantidade": 30 },
+        { "nome": "Baunilha", "preco": 5.00, "quantidade": 20 },
+        { "nome": "Canela", "preco": 4.00, "quantidade": 25 },
+        { "nome": "Creme", "preco": 2.50, "quantidade": 15 },
+        { "nome": "Caramelo", "preco": 3.50, "quantidade": 10 },
+        { "nome": "Menta", "preco": 6.00, "quantidade": 8 },
+        { "nome": "Gengibre", "preco": 4.50, "quantidade": 12 }
+      ];
+
+      for (let ingredienteData of ingredientesData) {
+        const existingIngrediente = await ingredienteService.getIngredienteByName(ingredienteData.nome);
+        if (!existingIngrediente) {
+            await ingredienteService.createIngrediente(ingredienteData);
+        }
+      }
+      
+    } catch (error) {
+        console.error("Erro ao popular a tabela de ingredientes:", error.message);
+    }
+
+    
+
+
     // criando cafes
     try{
       const cafesData = [
-        { "nome": "Café Expresso", "descricao": "Um café expresso forte e encorpado.", "preco": 5.00 },
-        { "nome": "Café Americano", "descricao": "Café diluído com água quente.", "preco": 4.50 },
-        { "nome": "Café Latte", "descricao": "Café expresso com leite vaporizado.", "preco": 6.00 },
-        { "nome": "Café Mocha", "descricao": "Café com chocolate e creme.", "preco": 6.50 },
-        { "nome": "Café Cappuccino", "descricao": "Café expresso com espuma de leite.", "preco": 5.50 },
-        { "nome": "Café Macchiato", "descricao": "Café expresso com uma pequena quantidade de leite.", "preco": 5.00 },
-        { "nome": "Café Au Lait", "descricao": "Café filtrado com leite vaporizado.", "preco": 5.75 },
-        { "nome": "Café Ristretto", "descricao": "Versão mais forte e menor do café expresso.", "preco": 5.25 },
-        { "nome": "Café Cortado", "descricao": "Café expresso com um pouco de leite.", "preco": 5.00 },
-        { "nome": "Café Irish", "descricao": "Café com um toque de uísque irlandês.", "preco": 7.00 }
-      ];
+        { nome: "Café Expresso", descricao: "Um café expresso forte e encorpado.", ingredientesNames: ['Café'] },
+        { nome: "Café Americano", descricao: "Café diluído com água quente.", ingredientesNames: ['Café'] },
+        { nome: "Café Latte", descricao: "Café expresso com leite vaporizado.", ingredientesNames: ['Café', 'Leite'] },
+        { nome: "Café Mocha", descricao: "Café com chocolate e creme.", ingredientesNames: ['Café', 'Chocolate', 'Creme'] },
+        { nome: "Café Cappuccino", descricao: "Café expresso com espuma de leite.", ingredientesNames: ['Café', 'Leite'] },
+        { nome: "Café Macchiato", descricao: "Café expresso com uma pequena quantidade de leite.", ingredientesNames: ['Café', 'Leite'] },
+        { nome: "Café Au Lait", descricao: "Café filtrado com leite vaporizado.", ingredientesNames: ['Café', 'Leite'] },
+        { nome: "Café Ristretto", descricao: "Versão mais forte e menor do café expresso.", ingredientesNames: ['Café'] },
+        { nome: "Café Cortado", descricao: "Café expresso com um pouco de leite.", ingredientesNames: ['Café', 'Leite'] },
+        { nome: "Café Irish", descricao: "Café com um toque de uísque irlandês.", ingredientesNames: ['Café'] }
+    ];
+    
 
       for (let cafeData of cafesData) {
 
         let cafe = await cafeService.getCafeByName(cafeData.nome);
 
         if (!cafe) {
-          await cafeService.createCafe(cafeData.nome,cafeData.descricao, cafeData.preco);
+          const ingredientIds = [];
+          let totalCost = 0;
+
+          for (let ingredientName of cafeData.ingredientesNames) {
+              let ingrediente = await ingredienteService.getIngredienteByName(ingredientName);
+              if (ingrediente) {
+                  ingredientIds.push(ingrediente.id);
+                  totalCost += ingrediente.preco; // Soma o preço do ingrediente
+              } else {
+                  console.error(`Ingrediente com nome "${ingredientName}" não encontrado.`);
+              }
+          }
+
+          // Calcula o preço final com lucro de 10%
+          const profitMargin = 0.10;
+          const finalPrice = totalCost + (totalCost * profitMargin);
+
+
+          await cafeService.createCafe(cafeData.nome,cafeData.descricao, finalPrice,ingredientIds);
         }
       }
     } catch (error) {

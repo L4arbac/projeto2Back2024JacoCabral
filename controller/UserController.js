@@ -3,6 +3,8 @@ const authMiddleware = require("../auth/authMiddleware");
 
 class UserController {
   async create(req, res) {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para criar um novo usuário.'
     try {
       const { nome, idade, cpf, usuario, senha, adm } = req.body;
       const user = await userService.createUser(nome, idade, cpf, usuario, senha, adm);
@@ -19,6 +21,8 @@ class UserController {
   }
 
   async update(req, res) {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para atualizar um usuário existente.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         const { id } = req.params;
@@ -45,9 +49,17 @@ class UserController {
   }
 
   async list(req, res) {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para listar todos os usuários com paginação.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
-        const users = await userService.listUsers();
+        const limite = parseInt(req.query.limite) || 5;  
+        const pagina = parseInt(req.query.pagina) || 1; 
+  
+        if (![5, 10, 30].includes(limite)) {
+            return res.status(400).json({ message: "Limite inválido. Os valores possíveis são 5, 10 ou 30." });
+        }
+        const users = await userService.listUsers(limite, pagina);
         res.status(200).json({
           message: "Usuários listados com sucesso!",
           data: users,
@@ -62,6 +74,8 @@ class UserController {
   }
 
   async getById(req, res) {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para recuperar um usuário pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         const { id } = req.params;
@@ -87,6 +101,8 @@ class UserController {
   }
 
   async delete(req, res) {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para deletar um usuário pelo ID.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         const { id } = req.params;
@@ -111,6 +127,8 @@ class UserController {
   }
 
   async login(req, res) {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para autenticar um usuário e gerar um token.'
     try {
       const { usuario, senha } = req.body;
       const user = await userService.getUserByUsuario(usuario);
@@ -146,6 +164,8 @@ class UserController {
   }
 
   async makeAdm(req, res) {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para promover um usuário a administrador.'
     authMiddleware.authenticateToken(req, res, async () => {
       try {
         const { id } = req.params;
@@ -168,40 +188,6 @@ class UserController {
         });
       }
     });
-  }
-
-  async popDatabase(req, res) {
-    try {
-      const usersData = req.body;
-      var user = null;
-
-      for (let userData of usersData) {
-        user = await userService.getUserByUsuario(userData.usuario);
-
-        if (!user) {
-          await userService.createUser(
-            userData.nome,
-            userData.idade,
-            userData.cpf,
-            userData.usuario,
-            userData.senha,
-            false
-          );
-        }
-      }
-
-      const adm = await userService.getUserByUsuario("patricia.lima");
-      await userService.updateUserFree(adm.id, { adm: true });
-
-      res.status(200).json({
-        message: "Banco populado com sucesso!",
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: "Erro ao popular o banco",
-        error: error.message,
-      });
-    }
   }
 }
 

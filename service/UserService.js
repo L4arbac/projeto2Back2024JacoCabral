@@ -43,9 +43,19 @@ class UserService {
     }
   }
   // Lista todos os usuários
-  async listUsers() {
+  async listUsers(limite , pagina ) {
     try {
-      const users = await User.findAll();
+      const validLimites = [5, 10, 30];
+      if (!validLimites.includes(limite)) {
+          throw new Error("Limite inválido. Os valores possíveis são 5, 10 ou 30.");
+      }
+
+     
+      const offset = (pagina - 1) * limite;
+      const users = await User.findAll({
+        limit: limite,   
+        offset: offset   
+    });
 
       return users;
     } catch (error) {

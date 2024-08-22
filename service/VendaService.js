@@ -17,10 +17,19 @@ const vendaService = {
     }
   },
 
-  async listVendas() {
+  async listVendas(limite , pagina ) {
     try {
+      const validLimites = [5, 10, 30];
+      if (!validLimites.includes(limite)) {
+          throw new Error("Limite inválido. Os valores possíveis são 5, 10 ou 30.");
+      }
+
+     
+      const offset = (pagina - 1) * limite;
       return await Venda.findAll({
-        include: [User, Cafe]
+        include: [User, Cafe],
+        limit: limite,   
+        offset: offset
       });
     } catch (error) {
       throw new Error(`Erro ao listar vendas: ${error.message}`);
