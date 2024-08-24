@@ -1,14 +1,12 @@
 const { Sequelize } = require("sequelize");
-const { Client } = require("pg"); // Importa o cliente PostgreSQL
+const { Client } = require("pg"); 
 
-// Dados de conexão ao banco de dados
 const dbName = process.env.DB_NAME;
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 const dbHost = process.env.DB_HOST || "localhost";
 const dbPort = process.env.DB_PORT || 5432;
 
-// Função para verificar se o banco de dados existe e criar se necessário
 async function ensureDatabaseExists() {
   const client = new Client({
     user: dbUser,
@@ -38,7 +36,6 @@ async function ensureDatabaseExists() {
   }
 }
 
-// Configuração do Sequelize com PostgreSQL
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
   dialect: "postgres",

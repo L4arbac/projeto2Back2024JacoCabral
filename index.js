@@ -25,7 +25,7 @@ app.use('/',installRoutes);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
-// Configura o servidor para escutar na porta 3000
+
 app.listen(port, () => {
     console.log('Servidor rodando na porta:'+port);
     

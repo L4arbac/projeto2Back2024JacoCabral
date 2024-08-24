@@ -20,7 +20,7 @@ const endpointsFiles = [
     './routes/VendaRoutes.js'
 ];
 
-// Gere a documentação Swagger
+
 swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
   require('./index'); 
 });

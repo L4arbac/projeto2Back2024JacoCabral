@@ -6,10 +6,8 @@ const CafeService = require('./CafeService');
 const vendaService = {
   async createVenda(userId, cafeIds, quantidade, total) {
     try {
-      // Cria a venda
       const venda = await Venda.create({ quantidade, total, UserId: userId });
 
-      // Adiciona os cafés à venda
       await venda.addCafes(cafeIds);
 
       return venda;

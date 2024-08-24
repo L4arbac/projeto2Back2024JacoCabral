@@ -18,7 +18,7 @@ const Ingrediente = sequelize.define('Ingrediente', {
     },
 });
 
-// Relação muitos-para-muitos entre Ingrediente e Café
+
 Ingrediente.belongsToMany(Cafe, { through: 'CafeIngrediente' });
 Cafe.belongsToMany(Ingrediente, { through: 'CafeIngrediente' });
 
