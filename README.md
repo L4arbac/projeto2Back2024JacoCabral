@@ -57,8 +57,8 @@ Para executar o sistema, uma rota especial foi criada:
 
 1. **Clone o repositório**:
     ```bash
-    git clone https://github.com/seu-repositorio.git
-    cd seu-repositorio
+    git clone https://github.com/L4arbac/projeto2Back2024JacoCabral.git
+    cd projeto2Back2024JacoCabral
     ```
 
 2. **Instale as dependências**:
