@@ -700,6 +700,41 @@
           }
         }
       }
+    },
+    "/balanco": {
+      "get": {
+        "tags": [
+          "Vendas"
+        ],
+        "description": "Endpoint para gerar o balanço das vendas.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/rank": {
+      "get": {
+        "tags": [
+          "Vendas"
+        ],
+        "description": "Endpoint para recuperar o rank dos cafés mais vendidos.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   }
 }

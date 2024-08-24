@@ -1,6 +1,7 @@
 const Venda = require('../model/Venda');
 const User = require('../model/User');
 const Cafe = require('../model/Cafe');
+const CafeService = require('./CafeService');
 
 const vendaService = {
   async createVenda(userId, cafeIds, quantidade, total) {
@@ -71,6 +72,55 @@ const vendaService = {
     } catch (error) {
       throw new Error(`Erro ao deletar venda: ${error.message}`);
     }
+  },
+
+  async balanco(){
+    try{
+
+      const vendas = Venda.findAll();
+      let total = 0;
+
+      for(let venda of vendas){  
+        total+=venda.total;
+      }
+      return total;
+
+    }catch(error){
+      throw new Error(`Erro ao gerar o balanço: ${error.message}`)
+    }
+  },
+
+  async RankCafe(){
+    try {
+
+      const vendas = await Venda.findAll({ include: [Cafe] });
+
+      const cafeCount = {};
+ 
+      vendas.forEach(venda => {
+        venda.Cafes.forEach(cafe => {
+          if (cafeCount[cafe.id]) {
+            cafeCount[cafe.id] += venda.quantidade;
+          } else {
+            cafeCount[cafe.id] = venda.quantidade;
+          }
+        });
+      });
+
+      const cafeRank = Object.entries(cafeCount)
+        .sort((a, b) => b[1] - a[1]) 
+        .map(async ([cafeId, totalVendas]) => {
+          const cafe = await CafeService.getCafeById(cafeId);
+          return { cafe: cafe.nome, totalVendas };
+        });
+
+      
+      return await Promise.all(cafeRank);
+    } catch (error) {
+      throw new Error(`Erro ao gerar ranking dos cafés: ${error.message}`);
+    }
+
+
   }
 };
 

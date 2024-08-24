@@ -142,6 +142,58 @@ class VendaController {
       }
     });
   }
+  
+  async balanco(req, res){
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para gerar o balanço das vendas.'
+    authMiddleware.authenticateToken(req, res, async () => {
+      try{
+        if(req.user.adm){
+
+          const balanco = await vendaService.balanco();
+
+          res.status(200).json({
+            message: "Balanço gerado com sucesso.",
+            balanco: balanco ,
+          });
+
+        }else{
+
+          return res.status(403).json({
+            message: "Ação não autorizada. Somente administradores podem realizar este processo.",
+          });
+        }
+
+      }catch(error){
+        res.status(500).json({
+          message: `Erro ao realizar o balanço: ${error.message}`,
+        });
+      }
+    });
+  }
+
+  async RankCafe(req, res){
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para recuperar o rank dos cafés mais vendidos.'
+    authMiddleware.authenticateToken(req, res, async () => {
+      try{
+    
+          const rank = await vendaService.RankCafe();
+
+          res.status(200).json({
+            message: "Ranking dos cafés mais vendidos gerado com sucesso!",
+            rank: rank ,
+          });
+
+      }catch(error){
+        res.status(500).json({
+          message: "Erro ao gerar ranking dos cafés",
+          error: error.message,
+        });
+      }
+    });
+  }
+
 }
 
 module.exports = new VendaController();
