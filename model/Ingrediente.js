@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database');
-const Cafe = require('./Cafe');
+
 
 const Ingrediente = sequelize.define('Ingrediente', {
     nome: {
@@ -19,7 +19,6 @@ const Ingrediente = sequelize.define('Ingrediente', {
 });
 
 
-Ingrediente.belongsToMany(Cafe, { through: 'CafeIngrediente' });
-Cafe.belongsToMany(Ingrediente, { through: 'CafeIngrediente' });
+
 
 module.exports = Ingrediente;

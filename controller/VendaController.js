@@ -194,6 +194,28 @@ class VendaController {
     });
   }
 
+  async ingredientesVenda(req, res){
+    // #swagger.tags = ['Vendas']
+    // #swagger.description = 'Endpoint para recuperar os ingredientes de uma venda.'
+    //authMiddleware.authenticateToken(req, res, async () => {
+      try{
+          const id = parseInt(req.params.id, 10);
+          const ingredientes = await vendaService.ingredientesVenda(id);
+
+          res.status(200).json({
+            message: "ingredientes da venda recuperado com sucesso!",
+            ingredientes: ingredientes ,
+          });
+
+      }catch(error){
+        res.status(500).json({
+          message: "Erro ao  retorna ingredientes da venda",
+          error: error.message,
+        });
+      }
+    //});
+  }
+
 }
 
 module.exports = new VendaController();

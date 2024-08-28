@@ -10,6 +10,7 @@ router.put('/venda/:id', VendaController.updateVenda.bind(VendaController));
 router.delete('/venda/:id', VendaController.deleteVenda.bind(VendaController));
 router.get('/balanco', VendaController.balanco.bind(VendaController));
 router.get('/rank', VendaController.RankCafe.bind(VendaController));
+router.get('/ingredientesVenda/:id',VendaController.ingredientesVenda.bind(VendaController));
 
 
 module.exports = router;

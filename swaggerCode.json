@@ -735,6 +735,30 @@
           }
         }
       }
+    },
+    "/ingredientesVenda/{id}": {
+      "get": {
+        "tags": [
+          "Vendas"
+        ],
+        "description": "Endpoint para recuperar os ingredientes de uma venda.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   }
 }

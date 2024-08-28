@@ -1,4 +1,5 @@
 const Cafe = require("../model/Cafe");
+const Ingrediente = require("../model/Ingrediente")
 
 const CafeService = {
   async createCafe(nome, descricao, preco, ingredienteIds) {
@@ -37,7 +38,9 @@ const CafeService = {
 
   async getCafeById(id) {
     try {
-      const cafe = await Cafe.findByPk(id);
+      const cafe = await Cafe.findByPk(id,{
+        include: [Ingrediente]
+      });
       if (!cafe) {
         throw new Error('Café não encontrado');
       }

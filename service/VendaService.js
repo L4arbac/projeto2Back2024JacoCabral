@@ -1,7 +1,10 @@
 const Venda = require('../model/Venda');
 const User = require('../model/User');
 const Cafe = require('../model/Cafe');
+const Ingrediente = require('../model/Ingrediente')
 const CafeService = require('./CafeService');
+const IngredienteService = require('./IngredienteService');
+const { Client } = require("pg"); 
 
 const vendaService = {
   async createVenda(userId, cafeIds, quantidade, total) {
@@ -119,6 +122,31 @@ const vendaService = {
     }
 
 
+  },
+
+  async ingredientesVenda(id){
+    try{
+
+      let venda = await Venda.findByPk(id, {
+        include: [User, Cafe]
+      });    
+       
+      let ingredientes = [] ;
+
+      for (let cafe of venda.Cafes){
+
+        cafe = await CafeService.getCafeById(cafe.id)
+    
+          for(let ingrediente of cafe.Ingredientes){
+            ingredientes.push(ingrediente.nome) ;
+          }
+      }
+      
+      return ingredientes;
+
+    }catch(error){
+      throw new Error(`Erro ao recuperar ingredientes de uma venda: ${error.message}`);
+    }
   }
 };
 
